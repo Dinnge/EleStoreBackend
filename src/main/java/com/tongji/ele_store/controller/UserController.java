@@ -2,6 +2,7 @@ package com.tongji.ele_store.controller;
 
 import com.tongji.ele_store.IResponse;
 import com.tongji.ele_store.Mapper.UserMapper;
+import com.tongji.ele_store.config.JwtUtils;
 import com.tongji.ele_store.entity.Order;
 import com.tongji.ele_store.entity.Role;
 import com.tongji.ele_store.entity.User;
@@ -25,6 +26,9 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @Autowired
     public UserController(UserService userService) {
@@ -74,11 +78,16 @@ public class UserController {
         if (user.getIsmember() != null && user.getIsmember().equals(true)) {
             Boolean ret = userService.checkPassword(username, password);
             if (ret != null && ret) {
+                // 生成 JWT token
+                String token = jwtUtils.generateToken(username);
+                
                 HashMap<String, String> hashMap = new HashMap<>();
                 String role = userService.getUserRole(user);
                 if(role != null) {
                     hashMap.put("role", role);
                 }
+                hashMap.put("token", token); // 添加 token 到返回数据
+                
                 log.info("登录成功", username);
                 return IResponse.ok(hashMap, "登录成功");
             } else {
