@@ -6,7 +6,6 @@ import com.tongji.ele_store.config.JwtUtils;
 import com.tongji.ele_store.entity.Order;
 import com.tongji.ele_store.entity.Role;
 import com.tongji.ele_store.entity.User;
-import com.tongji.ele_store.repository.UserRepository;
 import com.tongji.ele_store.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,8 +33,6 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-    @Autowired
-    private UserRepository userRepository;
 
     @CrossOrigin
     @PostMapping("/register")
