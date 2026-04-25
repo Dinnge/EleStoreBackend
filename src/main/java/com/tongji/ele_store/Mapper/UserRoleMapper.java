@@ -1,9 +1,10 @@
 package com.tongji.ele_store.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.tongji.ele_store.entity.Forn_useRo;
 import com.tongji.ele_store.entity.Role;
+import org.apache.ibatis.annotations.Mapper;
 
-public interface UserRoleMapper extends BaseMapper<Forn_useRo> {
+@Mapper
+public interface UserRoleMapper extends BaseMapper<Role> {
 
 }
