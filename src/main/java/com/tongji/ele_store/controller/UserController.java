@@ -15,6 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,7 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequestMapping("/api/users")
+@Tag(name = "用户管理", description = "用户注册、登录、查询等接口")
 public class UserController {
 
     private final UserService userService;
@@ -36,7 +41,13 @@ public class UserController {
 
     @CrossOrigin
     @PostMapping("/register")
-    public IResponse register(String username, String password, String email, String name, String confirmPassword) {
+    @Operation(summary = "用户注册", description = "注册新用户，需要提供用户名、密码、邮箱等信息")
+    public IResponse register(
+            @Parameter(description = "用户名") @RequestParam String username,
+            @Parameter(description = "密码") @RequestParam String password,
+            @Parameter(description = "邮箱") @RequestParam String email,
+            @Parameter(description = "角色名称") @RequestParam String name,
+            @Parameter(description = "确认密码") @RequestParam String confirmPassword) {
         if (!password.equals(confirmPassword)) {
             return IResponse.error("两次输入的密码不匹配");
         }
@@ -66,7 +77,10 @@ public class UserController {
 
     @CrossOrigin
     @PostMapping("/login")
-    public IResponse login(String username, String password) {
+    @Operation(summary = "用户登录", description = "用户登录，成功返回JWT令牌")
+    public IResponse login(
+            @Parameter(description = "用户名") @RequestParam String username,
+            @Parameter(description = "密码") @RequestParam String password) {
         User user = userService.findByUsername(username);
         if (user == null)
             return IResponse.error("用户不存在");
@@ -98,6 +112,7 @@ public class UserController {
 
     @CrossOrigin
     @GetMapping("/all")
+    @Operation(summary = "获取所有用户", description = "查询系统中所有用户信息")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.findAllUsers();
         return ResponseEntity.ok(users);
@@ -105,13 +120,19 @@ public class UserController {
 
     @CrossOrigin
     @DeleteMapping("/{username}")
-    public void deleteUser(@PathVariable String username) {
+    @Operation(summary = "删除用户", description = "根据用户名删除用户")
+    public void deleteUser(
+            @Parameter(description = "用户名") @PathVariable String username) {
         userService.deleteUserByUsername(username);
     }
 
     @CrossOrigin
     @PutMapping("/{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable Integer userId, @RequestBody User user, String username) {
+    @Operation(summary = "更新用户信息", description = "根据用户ID更新用户信息")
+    public ResponseEntity<?> updateUser(
+            @Parameter(description = "用户ID") @PathVariable Integer userId,
+            @RequestBody User user,
+            @Parameter(description = "用户名") @RequestParam String username) {
         // 检查用户是否存在
 //        User existingUser = userService.findById(userId);
         User user2 = userService.findByUsername(username);
